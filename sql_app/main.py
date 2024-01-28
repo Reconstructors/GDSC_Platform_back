@@ -44,3 +44,50 @@ def create_item_for_user(
 def read_items(skip: int=0, limit: int=100, db: Session=Depends(get_db)):
     items = crud.get_items(db, skip=skip, limit=limit)
     return items
+
+########################### 실제 사용 코드 #######################################
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
+# CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5500"],  # Allows requests from your client URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class TokenData(BaseModel):
+    token: str = Field()
+
+# Define your Google OAuth2 client ID
+CLIENT_ID = "902126570126-k61fod9mop3g2i3hh3r175fq4ba3gufa.apps.googleusercontent.com"
+#CLIENT_ID = "902126570126-58tn16k8uiuegrcborbcdumiiskk6f9p"
+
+def verify_google_oauth2_token(token):
+    try:
+        # Specify the CLIENT_ID of your app
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+
+        # ID token is valid. Get the user's Google Account ID from the decoded token.
+        userinfo = idinfo
+        return userinfo
+    except ValueError:
+        # Invalid token
+        return None
+
+
+@app.post("/api/account/login")
+def login(token_data: TokenData):
+    user_info = verify_google_oauth2_token(token_data.token)
+    print(token_data.token)
+    if user_info:
+        print(user_info)
+        return {"message": "Token received and verified", "user_info": user_info}
+    else:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
