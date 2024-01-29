@@ -42,7 +42,7 @@ class ProjectBase(BaseModel):
     end: Optional[date] = None
     description: Optional[str] = None
     contact_info: Optional[List[str]] = []
-    status: Optional[constr(regex='^(' + '|'.join([status.value for status in ProjectStatus]) + ')$')] = [] # 수정 필요
+    status: Optional[List[str]] = [] # 수정 필요
     photo_ids: Optional[List[str]] = []
     member_ids: List[str]
 
