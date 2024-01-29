@@ -29,12 +29,62 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(db_user)
     return db_user
 
-# def get_items(db: Session, skip: int=0, limit: int=100):
-#     return db.query(models.Item).offset(skip).limit(limit).all()
+##########################################################################
 
-# def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
-#     db_item = models.Item(**item.model_dump(), owner_id=user_id)
-#     db.add(db_item)
-#     db.commit()
-#     db.refresh(db_item)
-#     return db_item
+def get_project(db: Session, project_id: int):
+    return db.query(models.Project).filter(models.Project.id == project_id).first()
+
+def get_projects(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Project).offset(skip).limit(limit).all()
+
+def create_project(db: Session, project: schemas.ProjectCreate):
+    db_project = models.Project(
+        title=project.title,
+        start=project.start,
+        end=project.end,
+        description=project.description,
+        contact_info=project.contact_info,
+        status=project.status,
+        photo_ids=project.photo_ids,
+        member_ids=project.member_ids
+    )
+    db.add(db_project)
+    db.commit()
+    db.refresh(db_project)
+    return db_project
+
+##############################################################################
+
+def get_study(db: Session, study_id: int):
+    return db.query(models.Study).filter(models.Study.id == study_id).first()
+
+def get_studies(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Study).offset(skip).limit(limit).all()
+
+def create_study(db: Session, study: schemas.StudyCreate):
+    db_study = models.Study(
+        title=study.title,
+        start=study.start,
+        end=study.end,
+        description=study.description,
+        contact_info=study.contact_info,
+        status=study.status,
+        photo_ids=study.photo_ids
+    )
+    db.add(db_study)
+    db.commit()
+    db.refresh(db_study)
+    return db_study
+
+def create_study_match(db: Session, study_match: schemas.StudyMatchCreate):
+    db_study_match = models.StudyMatch(**study_match.dict())
+    db.add(db_study_match)
+    db.commit()
+    db.refresh(db_study_match)
+    return db_study_match
+
+def get_study_match(db: Session, match_id: int):
+    return db.query(models.StudyMatch).filter(models.StudyMatch.id == match_id).first()
+
+def get_study_matches(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.StudyMatch).offset(skip).limit(limit).all()
