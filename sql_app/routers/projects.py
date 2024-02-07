@@ -5,7 +5,7 @@ from ..services import projects_crud
 from ..schemas import projects_schemas
 from ..dependencies import get_db
 
-router = APIRouter()
+router = APIRouter(tags=["Project"])
 
 @router.post("/projects/", response_model=projects_schemas.Project)
 def create_project(project: projects_schemas.ProjectCreate, db: Session = Depends(get_db)):

@@ -7,7 +7,7 @@ from ..services import account_crud
 from ..schemas import account_schemas
 from ..dependencies import get_db
 
-router = APIRouter()
+router = APIRouter(tags=["Account"])
 
 # Define your Google OAuth2 client ID
 CLIENT_ID = "902126570126-k61fod9mop3g2i3hh3r175fq4ba3gufa.apps.googleusercontent.com"
