@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field, constr
+from pydantic import BaseModel
 from datetime import date
+import datetime
+from typing import Optional
 
 
 class Timeline(BaseModel):
@@ -14,3 +16,7 @@ class Timeline(BaseModel):
 class TimelineCreate(BaseModel):
     title: str
     date: date
+
+class TimelineUpdate(BaseModel):
+    title: Optional[str] = None
+    date: Optional[datetime.date] = None
