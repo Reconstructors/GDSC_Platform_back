@@ -19,7 +19,7 @@ class Study(StudyBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class StudyMatchBase(BaseModel):
     user_id: int
@@ -34,4 +34,4 @@ class StudyMatch(StudyMatchBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
