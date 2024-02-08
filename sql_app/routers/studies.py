@@ -6,7 +6,7 @@ from ..services import studies_crud
 from ..schemas import studies_schemas
 from ..dependencies import get_db
 
-router = APIRouter()
+router = APIRouter(tags=["Study"])
 
 @router.post("/api/studies/", response_model=studies_schemas.Study)
 def create_study(study: studies_schemas.StudyCreate, db: Session = Depends(get_db)):
