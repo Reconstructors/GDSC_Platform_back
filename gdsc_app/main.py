@@ -16,7 +16,7 @@ app.include_router(introduction.router)
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5500","http://localhost:5501"],  # Allows requests from your client URL
+    allow_origins=["*"],  # Allows requests from your client URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -11,7 +11,7 @@ router = APIRouter(tags=["Study"])
 
 # 스터디 목록 불러오기
 @router.get("/api/studies", response_model=List[studies_schemas.Study], description="스터디 목록 불러오기")
-def read_study(skip: int=0, limit: int=8, db: Session = Depends(get_db)):
+def read_studies(skip: int=0, limit: int=8, db: Session = Depends(get_db)):
     return studies_crud.get_studies(db=db, skip=skip, limit=limit)
 
 # id로 스터디 불러오기
@@ -27,7 +27,7 @@ def read_study(study_id: int, db: Session = Depends(get_db)):
 def create_study(study: studies_schemas.StudyCreate, db: Session = Depends(get_db)):
     return studies_crud.create_study(db=db, study=study)
 
-# id로 프로젝트 수정하기
+# id로 스터디 수정하기
 @router.patch("/api/studies/{study_id}", response_model=studies_schemas.Study)
 def update_study(study_id: int, study_update: studies_schemas.StudyUpdate, db: Session = Depends(get_db)):
     db_study = db.query(studies_models.Study).filter(studies_models.Study.id == study_id).first()
@@ -41,7 +41,7 @@ def update_study(study_id: int, study_update: studies_schemas.StudyUpdate, db: S
     db.refresh(db_study)
     return db_study
 
-# id로 프로젝트 삭제하기
+# id로 스터디 삭제하기
 @router.delete("/api/studies/{study_id}",response_model=studies_schemas.Study)
 def delete_study(study_id: int, db: Session=Depends(get_db)):
     deleted_study = studies_crud.delete_study(db=db, study_id=study_id)
@@ -61,7 +61,8 @@ def read_study_match(match_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Study match not found")
     return db_study_match
 
+# study, 유저 매칭 목록 보기
 @router.get("/api/study_matches/", response_model=List[studies_schemas.StudyMatch])
-def read_study_matches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_study_matches(skip: int = 0, limit: int = 8, db: Session = Depends(get_db)):
     study_matches = studies_crud.get_study_matches(db, skip=skip, limit=limit)
     return study_matches

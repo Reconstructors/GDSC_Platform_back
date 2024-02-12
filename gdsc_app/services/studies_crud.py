@@ -28,7 +28,7 @@ def create_study(db: Session, study: studies_schemas.StudyCreate):
 def update_study(db: Session, study_id: int, study_update: studies_schemas.StudyUpdate):
     db_study = db.query(studies_models.Study).filter(studies_models.Study.id == study_id).first()
     update_data = study_update.dict(exclude_unset=True)
-    for key, value in update_data.itmes():
+    for key, value in update_data.items():
         setattr(db_study, key, value)
     db.commit()
     db.refresh(db_study)
@@ -43,7 +43,12 @@ def delete_study(db:Session, study_id: int):
     return db_study
 
 def create_study_match(db: Session, study_match: studies_schemas.StudyMatchCreate):
-    db_study_match = studies_models.StudyMatch(**study_match.dict())
+    db_study_match = studies_models.StudyMatch(
+        user_id = study_match.user_id,
+        study_id = study_match.study_id,
+        is_approved = study_match.is_approved,
+        is_leader = study_match.is_leader
+    )
     db.add(db_study_match)
     db.commit()
     db.refresh(db_study_match)
