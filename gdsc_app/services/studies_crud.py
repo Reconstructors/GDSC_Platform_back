@@ -7,7 +7,7 @@ from ..schemas import studies_schemas
 def get_study(db: Session, study_id: int):
     return db.query(studies_models.Study).filter(studies_models.Study.id == study_id).first()
 
-def get_studies(db: Session, skip: int = 0, limit: int = 100):
+def get_studies(db: Session, skip: int = 0, limit: int = 8):
     return db.query(studies_models.Study).offset(skip).limit(limit).all()
 
 def create_study(db: Session, study: studies_schemas.StudyCreate):
@@ -18,11 +18,28 @@ def create_study(db: Session, study: studies_schemas.StudyCreate):
         description=study.description,
         contact_info=study.contact_info,
         status=study.status,
-        photo_ids=study.photo_ids
+        photo_ids=study.photo_ids,
     )
     db.add(db_study)
     db.commit()
     db.refresh(db_study)
+    return db_study
+
+def update_study(db: Session, study_id: int, study_update: studies_schemas.StudyUpdate):
+    db_study = db.query(studies_models.Study).filter(studies_models.Study.id == study_id).first()
+    update_data = study_update.dict(exclude_unset=True)
+    for key, value in update_data.itmes():
+        setattr(db_study, key, value)
+    db.commit()
+    db.refresh(db_study)
+    return db_study
+
+def delete_study(db:Session, study_id: int):
+    db_study = db.query(studies_models.Study).filter(studies_models.Study.id == study_id).first()
+    if not db_study:
+        return None
+    db.delete(db_study)
+    db.commit()
     return db_study
 
 def create_study_match(db: Session, study_match: studies_schemas.StudyMatchCreate):

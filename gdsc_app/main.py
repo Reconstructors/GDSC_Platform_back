@@ -13,7 +13,7 @@ app.include_router(projects.router)
 app.include_router(studies.router)
 app.include_router(introduction.router)
 
-# CORS Middleware 거지같은 CORS 문제 해결
+# CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5500","http://localhost:5501"],  # Allows requests from your client URL

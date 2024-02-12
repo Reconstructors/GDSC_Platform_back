@@ -22,5 +22,8 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
-class TokenData(BaseModel):
+class GoogleTokenData(BaseModel):
     token: str = Field()
+
+class JWTTokenData(BaseModel):
+    email: str | None=None

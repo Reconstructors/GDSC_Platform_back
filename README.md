@@ -5,4 +5,6 @@
 - pip install -r requirements.txt
 
 ## 로컬 서버 구동
-- uvicorn sql_app.main:app --reload
+- uvicorn gdsc_app.main:app --reload
+
+psql -p 5433 -U postgres
