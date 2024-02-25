@@ -8,3 +8,4 @@
 - uvicorn gdsc_app.main:app --reload
 
 psql -p 5433 -U postgres
+https://fastapi.tiangolo.com/tutorial/security/get-current-user/

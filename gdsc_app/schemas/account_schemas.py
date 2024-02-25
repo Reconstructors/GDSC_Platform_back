@@ -6,11 +6,12 @@ from enum import Enum
 class UserBase(BaseModel):
     name: str
     email: str
-    bio: Optional[str] = None
-    description: Optional[str] = None
-    links: Optional[str] = None  # JSON 형태의 문자열로 저장
-    interests: Optional[List[str]] = []  # 관심분야, 리스트 타입
-    participation: Optional[List[Tuple[int, int]]] = []  # 참여 기수 및 직위, 리스트 타입
+    cohort: int # 기수
+    position: str # 직급
+    bio: str | None = None
+    description: str | None = None
+    links: List[str] | None = None  # JSON 형태의 문자열로 저장
+    interests: List[str] | None = []  # 관심분야, 리스트 타입
     project_interest: Optional[bool] = None
 
 class UserCreate(UserBase):

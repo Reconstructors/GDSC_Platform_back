@@ -11,8 +11,8 @@ router = APIRouter(tags=["Account"])
 
 # 유저 목록 불러오기
 @router.get("/api/users", response_model=List[account_schemas.User], description="유저 목록 불러오기")
-def read_users(skip: int=0, limit: int=8, db: Session = Depends(get_db)):
-    return account_crud.get_users(db=db, skip=skip, limit=limit)
+def read_users(skip: int=0, limit: int=8, cohort: int | None = None, position:str|None=None, db: Session = Depends(get_db)):
+    return account_crud.get_users(db=db, skip=skip, limit=limit, cohort=cohort, position=position)
 
 # id로 유저 불러오기
 @router.get("/api/users/{user_id}", response_model=account_schemas.User, description="id로 유저 불러오기")
