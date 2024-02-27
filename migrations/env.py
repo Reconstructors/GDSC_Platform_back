@@ -1,27 +1,10 @@
-import sys
-from pathlib import Path
-
-# Append the root of your project to sys.path
-# Adjust the path according to your project structure
-sys.path.append(str(Path(__file__).resolve().parents[2]))
-
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-
-from gdsc_app.database import Base  # adjust the import path as necessary
-from gdsc_app.models.account_models import User
-from gdsc_app.models.introduction_models import Timeline
-from gdsc_app.models.notice_models import Notice
-from gdsc_app.models.projects_models import Project
-from gdsc_app.models.studies_models import Study, StudyMatch
-from gdsc_app.models.event_models import Event
-
-target_metadata = Base.metadata
-
+import models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -36,7 +19,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = models.Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -82,7 +65,9 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection, target_metadata=target_metadata
+        )
 
         with context.begin_transaction():
             context.run_migrations()

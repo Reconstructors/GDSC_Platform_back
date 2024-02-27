@@ -8,16 +8,17 @@ class User(Base):
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
+    username = Column(String, index=True)
+    password = Column(String, nullable=False)
     email = Column(String, unique=True, index=True)
-    cohort = Column(Integer, index=True)  # 동아리 기수
-    position = Column(String, index=True) # core, member, leader
-    bio = Column(String)  # 한 줄 소개
-    description = Column(Text)  # 자세한 자기소개
-    links = Column(JSON)  # JSON 형태의 문자열로 저장
-    skills = Column(JSON)  # 스킬셋, list 타입으로 저장
-    interests = Column(JSON)  # 관심분야, list 타입으로 저장
-    project_interest = Column(Boolean)  # 프로젝트 참여 희망 여부
+    cohort = Column(Integer, index=True,nullable=True)  # 동아리 기수
+    position = Column(String, index=True, nullable=True) # core, member, leader
+    bio = Column(String, nullable=True)  # 한 줄 소개
+    description = Column(Text, nullable=True)  # 자세한 자기소개
+    links = Column(JSON, nullable=True)  # JSON 형태의 문자열로 저장
+    skills = Column(JSON, nullable=True)  # 스킬셋, list 타입으로 저장
+    interests = Column(JSON, nullable=True)  # 관심분야, list 타입으로 저장
+    project_interest = Column(Boolean, nullable=True)  # 프로젝트 참여 희망 여부
 
 # 상태를 나타내는 Enum 클래스 정의
 class ProjectStatus(PyEnum):
@@ -32,6 +33,7 @@ class Project(Base):
     __tablename__ = "project"
 
     id = Column(Integer, primary_key=True, index=True)
+    create_date = Column(DateTime, nullable=False)
     title = Column(String, index=True)  # 프로젝트 제목
     start = Column(Date)  # 프로젝트 시작 시간
     end = Column(Date, nullable=True)  # 프로젝트 종료 시간, null 허용
@@ -39,6 +41,8 @@ class Project(Base):
     contact_info = Column(JSON)  # 연락처 정보, JSON 형태의 문자열로 저장
     status = Column(String, Enum(ProjectStatus))  # 스터디 상태
     photo_ids = Column(JSON)  # 사진 ID 리스트, JSON 타입으로 저장
+    create_date = Column(DateTime, nullable=True)
+    modify_date = Column(DateTime, nullable=False)
 
 class UserProjectMatch(Base):
     __tablename__ = "user_project_match"
@@ -64,6 +68,8 @@ class Study(Base):
     contact_info = Column(JSON)  # 연락처 정보, JSON 형태의 문자열로 저장
     status = Column(String)  # 스터디 상태
     photo_ids = Column(JSON)  # 사진 ID 리스트, JSON 타입으로 저장
+    create_date = Column(DateTime, nullable=True)
+    modify_date = Column(DateTime, nullable=False)
 
 class UserStudyMatch(Base):
     __tablename__ = "user_study_match"
@@ -78,34 +84,35 @@ class UserStudyMatch(Base):
     study = relationship("Study", backref="users")
 
 
-class Notice(Base):
-    __tablename__ = "notice"
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True) 
-    tag = Column(JSON)
-    upload_date = Column(Date)
-    view = Column(Integer)
-    photo_ids = Column(JSON)
-    content = Column(String)
-    user_id = Column(Integer, ForeignKey("user"))
-    user = relationship("User", backref="notice_users")
-    modify_date = Column(DateTime, nullable=True)
+# class Notice(Base):
+#     __tablename__ = "notice"
+
+#     id = Column(Integer, primary_key=True, index=True)
+#     title = Column(String, index=True) 
+#     tag = Column(JSON)
+#     upload_date = Column(Date)
+#     view = Column(Integer)
+#     photo_ids = Column(JSON)
+#     content = Column(String)
+#     user_id = Column(Integer, ForeignKey("user"))
+#     user = relationship("User", backref="notice_users")
+#     modify_date = Column(DateTime, nullable=True)
 
 
-class Event(Base):
-    __tablename__ = "events"
+# class Event(Base):
+#     __tablename__ = "events"
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    start = Column(DateTime)  # 스터디 시작 시간
-    end = Column(DateTime, nullable=True)  # 스터디 종료 시간, null 허용
-    status = Column(String)  # Done ongoing upcoming
-    type = Column(String)  # Regular, General,In campus, out campus
-    photo_id = Column(String)
-    location = Column(String)
-    user_id = Column(Integer, ForeignKey("user"))
-    user = relationship("User", backref="event_users")
-    modify_date = Column(DateTime, nullable=True)
+#     id = Column(Integer, primary_key=True, index=True)
+#     title = Column(String, index=True)
+#     start = Column(DateTime)  # 스터디 시작 시간
+#     end = Column(DateTime, nullable=True)  # 스터디 종료 시간, null 허용
+#     status = Column(String)  # Done ongoing upcoming
+#     type = Column(String)  # Regular, General,In campus, out campus
+#     photo_id = Column(String)
+#     location = Column(String)
+#     user_id = Column(Integer, ForeignKey("user"))
+#     user = relationship("User", backref="event_users")
+#     modify_date = Column(DateTime, nullable=True)
 
 
 class Timeline(Base):
