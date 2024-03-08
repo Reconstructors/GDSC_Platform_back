@@ -47,11 +47,11 @@ def timeline_update(_timeline_update: intro_schema.TimelineUpdate,
 def timeline_delete(_timeline_delete: intro_schema.TimelineDelete,
                     db: Session = Depends(get_db),
                     current_user: User = Depends(get_current_user)):
-    db_timeline = intro_crud.get_timeline(db, question_id=_timeline_delete.timeline_id)
+    db_timeline = intro_crud.get_timeline(db, timeline_id=_timeline_delete.timeline_id)
     if not db_timeline:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="데이터를 찾을수 없습니다.")
     if current_user.id != db_timeline.user.id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="삭제 권한이 없습니다.")
-    intro_crud.delete_timeline(db=db, db_question=db_timeline)
+    intro_crud.delete_timeline(db=db, db_timeline=db_timeline)

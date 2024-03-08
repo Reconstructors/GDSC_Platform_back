@@ -33,7 +33,6 @@ class Project(Base):
     __tablename__ = "project"
 
     id = Column(Integer, primary_key=True, index=True)
-    create_date = Column(DateTime, nullable=False)
     title = Column(String, index=True)  # 프로젝트 제목
     start = Column(Date)  # 프로젝트 시작 시간
     end = Column(Date, nullable=True)  # 프로젝트 종료 시간, null 허용
@@ -42,7 +41,7 @@ class Project(Base):
     status = Column(String, Enum(ProjectStatus))  # 스터디 상태
     photo_ids = Column(JSON)  # 사진 ID 리스트, JSON 타입으로 저장
     create_date = Column(DateTime, nullable=True)
-    modify_date = Column(DateTime, nullable=False)
+    modify_date = Column(DateTime, nullable=True)
 
 class UserProjectMatch(Base):
     __tablename__ = "user_project_match"
@@ -120,7 +119,10 @@ class Timeline(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)  # 활동 제목
+    description = Column(Text)
     date = Column(Date)  # 활동 일자
+    user_id = Column(Integer, ForeignKey('user.id'))  # 유저 ID, 유저 테이블에 대한 외래 키
+    user = relationship("User", backref="timelines")
 
 
 

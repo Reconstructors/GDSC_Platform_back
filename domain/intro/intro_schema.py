@@ -16,10 +16,12 @@ class Timeline(BaseModel):
 class TimelineCreate(BaseModel):
     title: str
     date: date
+    description: str
 
 class TimelineUpdate(BaseModel):
     timeline_id: int
     title: Optional[str] = None
+    description: str | None = None
     date: Optional[datetime.date] = None
 
 class TimeLineList(BaseModel):
@@ -27,4 +29,4 @@ class TimeLineList(BaseModel):
     timeline_list: list[Timeline] = []
 
 class TimelineDelete(BaseModel):
-    timelin_id: int
+    timeline_id: int

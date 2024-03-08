@@ -63,9 +63,6 @@ def get_user_list(
     return users
 
 
-
-
-
 def update_user(db: Session, user_id: int, user_update: UserUpdate):
     db_user = (
         db.query(User).filter(User.id == user_id).first()

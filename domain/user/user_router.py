@@ -87,7 +87,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 # id로 유저 정보 수정하기
 @router.patch("/api/account/{user_id}", response_model=user_schema.User)
 def update_user(user_id: int, user_update: user_schema.UserUpdate, db: Session = Depends(get_db)):
-    user = user_crud.get_existing_user(db, user_create=_user_create)
+    user = user_crud.get_existing_user(db, user_create=user_update)
     if user is None:
         raise HTTPException(status_code=404, detail="user not found")
     # 여기에 정보 수정 코드 작성

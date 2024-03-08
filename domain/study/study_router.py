@@ -49,13 +49,13 @@ def study_update(_study_update: study_schema.StudyUpdate,
 # id로 스터디 삭제하기
 @router.delete("/delete/{study_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_study(study_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    db_study = studies_crud.get_study(db, study_id=study_id)
+    db_study = study_crud.get_study(db, study_id=study_id)
     if db_study is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Study not found")
     # 삭제 권한 검사 로직 필요(예시로 추가)
     if current_user.id != db_study.user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Permission denied")
-    studies_crud.delete_study(db=db, study_id=study_id)
+    study_crud.delete_study(db=db, study_id=study_id)
 
 @router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
 def study_delete(_study_delete: study_schema.StudyDelete,
