@@ -8,9 +8,9 @@
 
 ## 로컬 서버 구동
 
-- uvicorn gdsc_app.main:app --reload
+- uvicorn main:app --reload
 
-psql -p 5433 -U postgres
+- https://wikidocs.net/176073 참고
 
 alembic revision --autogenerate
 
