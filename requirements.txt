@@ -1,6 +1,7 @@
 aiofiles==23.2.1
 aioredis==2.0.1
 aiosqlite==0.17.0
+alembic==1.13.1
 annotated-types==0.6.0
 anyio==4.2.0
 async-timeout==4.0.3
@@ -13,8 +14,10 @@ charset-normalizer==3.3.2
 click==8.1.7
 colorama==0.4.6
 cryptography==42.0.2
+dnspython==2.6.1
 driver==0.1.0
 ecdsa==0.18.0
+email_validator==2.1.1
 exceptiongroup==1.2.0
 fastapi==0.109.0
 fastapi-admin==1.0.4
