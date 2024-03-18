@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from domain.study.study_schema import StudyCreate, StudyUpdate
-from models import Study, User
+from models import Study, User, UserStudyMatch
 from sqlalchemy.orm import Session
 
 from domain.study import study_schema
@@ -34,8 +34,18 @@ def create_study(db: Session, study_create: StudyCreate, user_id: int):
     )
     db.add(db_study)
     db.commit()
+    db.refresh(db_study)
 
-# TODO: 이렇게 수정하면 안됨
+    study_match = UserStudyMatch(
+        user_id = user_id,
+        study_id = db_study.id,
+        is_approved = True,
+        is_leader = True
+    )
+    create_study_match(db=db, study_match=study_match)
+
+    return db_study
+
 def update_study(db: Session, db_study: Study,
                     study_update: StudyUpdate):
     
@@ -48,21 +58,27 @@ def update_study(db: Session, db_study: Study,
     db.add(db_study)
     db.commit()
 
+    db.refresh(db_study)
+    return db_study
+
 def delete_study(db: Session, db_study: Study):
     db.delete(db_study)
     db.commit()
 
-# def create_study_match(db: Session, study_match: studies_schemas.StudyMatchCreate):
-#     db_study_match = studies_models.StudyMatch(
-#         user_id = study_match.user_id,
-#         study_id = study_match.study_id,
-#         is_approved = study_match.is_approved,
-#         is_leader = study_match.is_leader
-#     )
-#     db.add(db_study_match)
-#     db.commit()
-#     db.refresh(db_study_match)
-#     return db_study_match
+def create_study_match(db: Session, study_match: UserStudyMatch):
+    db_study_match = UserStudyMatch(
+        user_id = study_match.user_id,
+        study_id = study_match.study_id,
+        is_approved = study_match.is_approved,
+        is_leader = study_match.is_leader
+    )
+    db.add(db_study_match)
+    db.commit()
+    db.refresh(db_study_match)
+
+    return db_study_match
+
+
 
 # def get_study_match(db: Session, match_id: int):
 #     return db.query(studies_models.StudyMatch).filter(studies_models.StudyMatch.id == match_id).first()
