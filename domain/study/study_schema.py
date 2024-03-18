@@ -6,7 +6,7 @@ from enum import Enum
 class StudyBase(BaseModel):
     title: str
     start: date
-    end: Optional[date] = None
+    end: date | None = None
     description: Optional[str] = None
     contact_info: Optional[List[str]] = []  # JSON 필드는 리스트 타입으로 표현
     status: str | None = None
@@ -27,7 +27,10 @@ class StudyCreate(StudyBase):
     pass
 
 class StudyOut(Study):
-    pass
+    create_date: date
+    modify_date: date
+
+    # people: list[int] # 스터디 참여자 id # FIXME: 스터디매칭 기능 개발 후 적용 필요
 
 class StudyUpdate(BaseModel):
     title: str | None = None
