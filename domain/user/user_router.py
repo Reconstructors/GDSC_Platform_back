@@ -112,6 +112,9 @@ def read_user_list(
     """
     return user_crud.get_user_list(db=db, skip=skip, limit=limit, cohort=cohort, position=position)
 
+# TODO: user_id 리스트를 입력받아, 그에 해당하는 유저 목록 불러오기
+
+
 
 
 # id로 한 유저의 정보 불러오기
