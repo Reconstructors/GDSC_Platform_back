@@ -4,7 +4,7 @@ from typing import List
 
 from domain.study import study_schema, study_crud
 from database import get_db
-from models import User  # 가정한 사용자 모델 경로
+from models import User, UserStudyMatch
 
 from domain.auth.dependencies import get_current_user_id
 
@@ -18,6 +18,7 @@ def study_list(page: int=0, size: int=10, db: Session = Depends(get_db)):
     return _study_list
     
 # id로 스터디 불러오기
+# TODO: 스터디 참여자 id 목록도 함께 반환
 @router.get("/detail/{study_id}", response_model=study_schema.Study)
 def study_detail(study_id: int, db: Session = Depends(get_db)):
     study = study_crud.get_study(db, study_id=study_id)
@@ -29,8 +30,11 @@ def study_create(_study_create: study_schema.StudyCreate,
                     db: Session = Depends(get_db),
                     user_id: User = Depends(get_current_user_id)):
     
-    return study_crud.create_study(db=db, study_create=_study_create,
+    db_study = study_crud.create_study(db=db, study_create=_study_create,
                                   user_id=user_id)
+
+    
+    return db_study
 
 @router.patch("/update/{study_id}", status_code=status.HTTP_200_OK)
 def study_update(
@@ -53,7 +57,7 @@ def study_update(
 # id로 스터디 삭제하기
 @router.delete("/delete/{study_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_study(
-        study_id: int, 
+        study_id: int,
         user_id: User = Depends(get_current_user_id),
         db: Session = Depends(get_db)):
     db_study = study_crud.get_study(db, study_id=study_id)
@@ -62,17 +66,16 @@ def delete_study(
     # 삭제 권한 검사 로직 필요(예시로 추가)
     if user_id != db_study.owner_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Permission denied")
-    study_crud.delete_study(db=db, study_id=study_id)
-
-@router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
-def study_delete(_study_delete: study_schema.StudyDelete,
-                    db: Session = Depends(get_db),
-                    user_id: User = Depends(get_current_user_id)):
-    db_study = study_crud.get_study(db, study_id=_study_delete.study_id)
-    if not db_study:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="데이터를 찾을수 없습니다.")
-    if user_id != db_study.owner_id:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="삭제 권한이 없습니다.")
     study_crud.delete_study(db=db, db_study=db_study)
+
+
+# TODO: 스터디 신청하기
+    
+# TODO: 스터디 신청한 사용자 정보 리스트 반환하기
+#   - 스터디를 만든 사람만 요청 가능
+
+# TODO: 스터디 참여 요청 승인하기
+#   - 스터디를 만든 사람만 요청 가능
+    
+# TODO: 스터디 참여 요청 거절하기
+#   - 스터디를 만든 사람만 요청 가능
