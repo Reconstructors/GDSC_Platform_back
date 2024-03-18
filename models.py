@@ -10,7 +10,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, index=True)
     password = Column(String, nullable=False)
-    email = Column(String, unique=True, index=True)
+    # email = Column(String, unique=True, index=True)
     cohort = Column(Integer, index=True,nullable=True)  # 동아리 기수
     position = Column(String, index=True, nullable=True) # core, member, leader
     bio = Column(String, nullable=True)  # 한 줄 소개
@@ -38,9 +38,9 @@ class Project(Base):
     end = Column(Date, nullable=True)  # 프로젝트 종료 시간, null 허용
     description = Column(Text)  # 프로젝트 소개
     contact_info = Column(JSON)  # 연락처 정보, JSON 형태의 문자열로 저장
-    status = Column(String, Enum(ProjectStatus))  # 스터디 상태
+    status = Column(String, Enum(ProjectStatus))  # 프로젝트 상태 상태
     photo_ids = Column(JSON)  # 사진 ID 리스트, JSON 타입으로 저장
-    create_date = Column(DateTime, nullable=True)
+    create_date = Column(DateTime, nullable=True) # FIXME: create_date와 modify_date가 왜 nullable인가요?
     modify_date = Column(DateTime, nullable=True)
 
 class UserProjectMatch(Base):
@@ -49,11 +49,11 @@ class UserProjectMatch(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('user.id'))  # 유저 ID, 유저 테이블에 대한 외래 키
     project_id = Column(Integer, ForeignKey('project.id'))  # 스터디 ID, 스터디 테이블에 대한 외래 키
-    is_approved = Column(Boolean, default=False)  # 승인 여부, 기본값은 False
+    is_approved = Column(Boolean, default=False)  # 팀장의 프로젝트 참여 승인 여부, 기본값은 False
     is_leader = Column(Boolean, default=False)  # 팀장 여부, 기본값은 False
 
     user = relationship("User", backref="projects")
-    study = relationship("Project", backref="users")
+    project = relationship("Project", backref="users")
 
 
 class Study(Base):
@@ -67,8 +67,10 @@ class Study(Base):
     contact_info = Column(JSON)  # 연락처 정보, JSON 형태의 문자열로 저장
     status = Column(String)  # 스터디 상태
     photo_ids = Column(JSON)  # 사진 ID 리스트, JSON 타입으로 저장
-    create_date = Column(DateTime, nullable=True)
+    create_date = Column(DateTime, nullable=False)
     modify_date = Column(DateTime, nullable=False)
+
+    owner_id = Column(Integer, nullable=False)
 
 class UserStudyMatch(Base):
     __tablename__ = "user_study_match"
@@ -79,8 +81,8 @@ class UserStudyMatch(Base):
     is_approved = Column(Boolean, default=False)  # 승인 여부, 기본값은 False
     is_leader = Column(Boolean, default=False)  # 스터디 팀장 여부, 기본값은 False
 
-    user = relationship("User", backref="studies")
-    study = relationship("Study", backref="users")
+    user = relationship("User", backref="study")
+    study = relationship("Study", backref="user")
 
 
 # class Notice(Base):
@@ -122,7 +124,8 @@ class Timeline(Base):
     description = Column(Text)
     date = Column(Date)  # 활동 일자
     user_id = Column(Integer, ForeignKey('user.id'))  # 유저 ID, 유저 테이블에 대한 외래 키
-    user = relationship("User", backref="timelines")
+    
+    user = relationship("User", backref="timeline")
 
 
 

@@ -10,20 +10,35 @@ class StudyBase(BaseModel):
     description: Optional[str] = None
     contact_info: Optional[List[str]] = []  # JSON 필드는 리스트 타입으로 표현
     status: str | None = None
-    photo_ids: Optional[List[str]] = []  # JSON 필드는 리스트 타입으로 표현
+    # photo_ids: Optional[List[str]] = []  # JSON 필드는 리스트 타입으로 표현
+    
+    class Config:
+        orm_mode = True
+
+class Study(StudyBase):
+    id: int
+    owner_id: int
+
+class StudyInDB(Study):
+    create_date: date
+    modify_date: date
 
 class StudyCreate(StudyBase):
     pass
 
-class StudyUpdate(StudyBase):
-    study_id: int
+class StudyOut(Study):
+    pass
 
-class Study(StudyBase):
-    id: int
+class StudyUpdate(BaseModel):
+    title: str | None = None
+    start: date | None = None
+    end: date | None = None
+    description: str | None = None
+    contact_info: Optional[List[str]] = []  # JSON 필드는 리스트 타입으로 표현
+    status: str | None = None
 
-class StudyList(BaseModel):
-    total: int = 0
-    study_list: list[Study] = []
+
+
 
 class StudyMatchBase(BaseModel):
     user_id: int

@@ -6,17 +6,19 @@ from domain.study.study_schema import StudyCreate, StudyUpdate
 from models import Study, User
 from sqlalchemy.orm import Session
 
+from domain.study import study_schema
+
 def get_study_list(db: Session, skip: int = 0, limit: int = 10):
     _study_list = db.query(Study).order_by(Study.create_date.desc())
-    total = _study_list.count()
-    study_list = _study_list.offset(skip).limit(limit).all()
-    return total, study_list
 
-def get_study(db: Session, study_id: int):
+    study_list = _study_list.offset(skip).limit(limit).all()
+    return study_list
+
+def get_study(db: Session, study_id: int) -> study_schema.StudyInDB:
     study = db.query(Study).get(study_id)
     return study
 
-def create_study(db: Session, study_create: StudyCreate):
+def create_study(db: Session, study_create: StudyCreate, user_id: int):
     db_study = Study(
         title=study_create.title,
         start=study_create.start,
@@ -24,21 +26,25 @@ def create_study(db: Session, study_create: StudyCreate):
         description=study_create.description,
         contact_info=study_create.contact_info,
         status=study_create.status,
-        photo_ids=study_create.photo_ids,
+        photo_ids={},
+        create_date= datetime.now(),
+        modify_date= datetime.now(),
+
+        owner_id= user_id
     )
     db.add(db_study)
     db.commit()
 
+# TODO: 이렇게 수정하면 안됨
 def update_study(db: Session, db_study: Study,
                     study_update: StudyUpdate):
-    db_study.title = study_update.title
-    db_study.start = study_update.start
+    
+    update_data = study_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_study, key, value)
+
     db_study.modify_date = datetime.now()
-    db_study.end = study_update.end
-    db_study.description = study_update.description
-    db_study.contact_info = study_update.contact_info
-    db_study.status = study_update.status
-    db_study.photo_ids = study_update.photo_ids
+
     db.add(db_study)
     db.commit()
 
