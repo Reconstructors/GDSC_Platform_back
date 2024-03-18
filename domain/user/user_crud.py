@@ -1,4 +1,4 @@
-from passlib.context import CryptContext
+from passlib.context import CryptContext # 암호 해싱(비밀번호 암호화 및 검증)
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
@@ -13,7 +13,6 @@ def create_user(db: Session, user_create: UserCreate):
     db_user = User(
         username=user_create.username,
         password = pwd_context.hash(user_create.password1),
-        email=user_create.email,
         bio=user_create.bio,
         cohort=user_create.cohort,
         position=user_create.position,
@@ -25,40 +24,42 @@ def create_user(db: Session, user_create: UserCreate):
     # 데이터베이스에 추가 및 커밋
     db.add(db_user)
     db.commit()
-    db.refresh(db_user)
+    db.refresh(db_user) # db_user 인스턴스의 최신 상태를 로드. user의 id가 추가됨.
     return db_user
 
-def get_existing_user(db: Session, user_create: UserCreate):
-    return db.query(User).filter(User.email == user_create.email).first()
 
-def get_user(db: Session, username: str):
-    return (
-        db.query(User).filter(User.username == username).first()
-    )
+# user id로 사용자 정보 가져오기
+def get_user_by_username(db: Session, username: str):
+    return db.query(User).filter(User.username == username).first()
 
-def get_user_by_email(db: Session, user_email: str):
+# user id로 사용자 정보 가져오기
+def get_user_by_id(db: Session, user_id:int):
     return (
         db.query(User)
-        .filter(User.email == user_email)
+        .filter(User.id == user_id)
         .first()
     )
 
-
+# 조건에 맞는 유저 정보 목록 가져오기
+# skip, limit에 None을 전달하면, 해당 조건을 적용하지 않겠다는 의미
 def get_user_list(
     db: Session,
-    skip: int = 0,
-    limit: int = 100,
+    skip: int = None,
+    limit: int = None,
     cohort: int = None,
     position: str = None,
 ):
     query = db.query(User)
-    # Apply cohort filter if provided
+    
+    # 기수 필터 적용
     if cohort is not None:
         query = query.filter(User.cohort == cohort)
-    # Apply position filter if provided
+    
+    # 직급 필터 적용
     if position is not None:
         query = query.filter(User.position == position)
-    # Apply pagination and return results
+    
+    # Pagination 적용
     users = query.offset(skip).limit(limit).all()
     return users
 
@@ -73,7 +74,6 @@ def update_user(db: Session, user_id: int, user_update: UserUpdate):
     db.commit()
     db.refresh(db_user)
     return db_user
-
 
 def delete_user(db: Session, user_id: int):
     db_user = (
