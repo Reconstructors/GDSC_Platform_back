@@ -33,9 +33,18 @@ def create_study(db: Session, study_create: StudyCreate, user_id: int):
     )
     db.add(db_study)
     db.commit()
+    db.refresh(db_study)
+
+    study_match = UserStudyMatch(
+        user_id = user_id,
+        study_id = db_study.id,
+        is_approved = True,
+        is_leader = True
+    )
+    create_study_match(db=db, study_match=study_match)
+
     return db_study
 
-# TODO: 이렇게 수정하면 안됨
 def update_study(db: Session, db_study: Study,
                     study_update: StudyUpdate):
     
@@ -47,6 +56,9 @@ def update_study(db: Session, db_study: Study,
 
     db.add(db_study)
     db.commit()
+
+    db.refresh(db_study)
+    return db_study
 
 def delete_study(db: Session, db_study: Study):
     db.delete(db_study)
@@ -63,6 +75,8 @@ def create_study_match(db: Session, study_match_create: study_schema.StudyMatchC
     db.commit()
     db.refresh(db_study_match)
     return db_study_match
+
+
 
 def get_study_match(db: Session, match_id: int):
     return db.query(UserStudyMatch).get(UserStudyMatch.id == match_id)
