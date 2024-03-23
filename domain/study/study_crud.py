@@ -26,10 +26,9 @@ def create_study(db: Session, study_create: StudyCreate, user_id: int):
         description=study_create.description,
         contact_info=study_create.contact_info,
         status=study_create.status,
-        photo_ids={},
+        # photo_ids={},
         create_date= datetime.now(),
         modify_date= datetime.now(),
-
         owner_id= user_id
     )
     db.add(db_study)
@@ -42,7 +41,6 @@ def create_study(db: Session, study_create: StudyCreate, user_id: int):
         is_approved = True,
         is_leader = True
     )
-    create_study_match(db=db, study_match=study_match)
 
     return db_study
 
@@ -65,23 +63,62 @@ def delete_study(db: Session, db_study: Study):
     db.delete(db_study)
     db.commit()
 
-def create_study_match(db: Session, study_match: UserStudyMatch):
+def create_study_match(db: Session, study_match_create: study_schema.StudyMatchCreate):
     db_study_match = UserStudyMatch(
-        user_id = study_match.user_id,
-        study_id = study_match.study_id,
-        is_approved = study_match.is_approved,
-        is_leader = study_match.is_leader
+        user_id = study_match_create.user_id,
+        study_id = study_match_create.study_id,
+        is_approved = study_match_create.is_approved,
+        is_leader = study_match_create.is_leader
     )
     db.add(db_study_match)
     db.commit()
     db.refresh(db_study_match)
-
     return db_study_match
 
 
+def get_study_match(db: Session, match_id: int):
+    return db.query(UserStudyMatch).get(UserStudyMatch.id == match_id)
 
-# def get_study_match(db: Session, match_id: int):
-#     return db.query(studies_models.StudyMatch).filter(studies_models.StudyMatch.id == match_id).first()
+def get_study_match_by_study_id_user_id(db: Session, study_id: int, user_id: int):
+    return db.query(UserStudyMatch).filter(UserStudyMatch.study_id == study_id, UserStudyMatch.user_id == user_id).first()
 
-# def get_study_matches(db: Session, skip: int = 0, limit: int = 100):
-#     return db.query(studies_models.StudyMatch).offset(skip).limit(limit).all()
+
+def get_study_matches_by_study_id(db: Session, study_id: int, skip:int=0, limit: int=100):
+    return db.query(UserStudyMatch).filter(UserStudyMatch.study_id == study_id).offset(skip).limit(limit).all()
+
+def get_unapproved_study_matches_by_study_id(db: Session, study_id: int, skip:int=0, limit: int=100):
+    return db.query(UserStudyMatch).filter(UserStudyMatch.study_id == study_id, UserStudyMatch.is_approved==False).offset(skip).limit(limit).all()
+
+def get_user_ids_by_study_id(db: Session, study_id: int, skip: int = 0, limit: int = 100) -> list[int]:
+    matches = get_study_matches_by_study_id(db=db, study_id=study_id)
+    user_ids = [match.user_id for match in matches]
+    return user_ids
+
+def get_unapproved_user_ids_by_study_id(db: Session, study_id: int, skip: int = 0, limit: int = 100) -> list[int]:
+    matches = get_unapproved_study_matches_by_study_id(db=db, study_id=study_id)
+    user_ids = [match.user_id for match in matches]
+    return user_ids
+
+def get_study_matches(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(UserStudyMatch).offset(skip).limit(limit).all()
+
+def approve_study_match(db: Session, study_id: int, user_id: int):
+    db_match = db.query(UserStudyMatch).get(UserStudyMatch.study_id==study_id, UserStudyMatch.user_id==user_id)
+    db_match.is_approved = True
+    db.add(db_match)
+    db.commit()
+    db.refresh(db_match)
+    return db_match
+
+def delete_study_match(db: Session, db_study_match: UserStudyMatch):
+    db.delete(db_study_match)
+    db.commit()
+
+def delete_study_matches_by_study_id(db: Session, study_id: int):
+    db.query(UserStudyMatch).filter(UserStudyMatch.study_id == study_id).all().delete()
+    db.commit()
+
+def delete_study_matches_by_user_id(db: Session, user_id: int):
+    db.query(UserStudyMatch).filter(UserStudyMatch.user_id == user_id).all().delete()
+    db.commit()
+
