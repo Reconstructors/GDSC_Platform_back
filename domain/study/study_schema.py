@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, constr
 from typing import List, Tuple, Optional
-from datetime import date
+from datetime import date, datetime
 from enum import Enum
 
 class StudyBase(BaseModel):
@@ -20,8 +20,8 @@ class Study(StudyBase):
     owner_id: int
 
 class StudyInDB(Study):
-    create_date: date
-    modify_date: date
+    create_date: datetime
+    modify_date: datetime
 
 class StudyCreate(StudyBase):
     pass
@@ -30,7 +30,7 @@ class StudyOut(Study):
     create_date: date
     modify_date: date
 
-    # people: list[int] # 스터디 참여자 id # FIXME: 스터디매칭 기능 개발 후 적용 필요
+    people: list[int] # 스터디 참여자 id # FIXME: 스터디매칭 기능 개발 후 적용 필요
 
 class StudyUpdate(BaseModel):
     title: str | None = None
