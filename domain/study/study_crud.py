@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from domain.study.study_schema import StudyCreate, StudyUpdate
-from models import Study, User
+from models import Study, User, UserStudyMatch
 from sqlalchemy.orm import Session
 
 from domain.study import study_schema
@@ -26,14 +26,14 @@ def create_study(db: Session, study_create: StudyCreate, user_id: int):
         description=study_create.description,
         contact_info=study_create.contact_info,
         status=study_create.status,
-        photo_ids={},
+        # photo_ids={},
         create_date= datetime.now(),
         modify_date= datetime.now(),
-
         owner_id= user_id
     )
     db.add(db_study)
     db.commit()
+    return db_study
 
 # TODO: 이렇게 수정하면 안됨
 def update_study(db: Session, db_study: Study,
@@ -52,20 +52,28 @@ def delete_study(db: Session, db_study: Study):
     db.delete(db_study)
     db.commit()
 
-# def create_study_match(db: Session, study_match: studies_schemas.StudyMatchCreate):
-#     db_study_match = studies_models.StudyMatch(
-#         user_id = study_match.user_id,
-#         study_id = study_match.study_id,
-#         is_approved = study_match.is_approved,
-#         is_leader = study_match.is_leader
-#     )
-#     db.add(db_study_match)
-#     db.commit()
-#     db.refresh(db_study_match)
-#     return db_study_match
+def create_study_match(db: Session, study_match_create: study_schema.StudyMatchCreate):
+    db_study_match = UserStudyMatch(
+        user_id = study_match_create.user_id,
+        study_id = study_match_create.study_id,
+        is_approved = study_match_create.is_approved,
+        is_leader = study_match_create.is_leader
+    )
+    db.add(db_study_match)
+    db.commit()
+    db.refresh(db_study_match)
+    return db_study_match
 
-# def get_study_match(db: Session, match_id: int):
-#     return db.query(studies_models.StudyMatch).filter(studies_models.StudyMatch.id == match_id).first()
+def get_study_match(db: Session, match_id: int):
+    return db.query(UserStudyMatch).get(UserStudyMatch.id == match_id)
 
-# def get_study_matches(db: Session, skip: int = 0, limit: int = 100):
-#     return db.query(studies_models.StudyMatch).offset(skip).limit(limit).all()
+def get_study_matches(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(UserStudyMatch).offset(skip).limit(limit).all()
+
+def delete_study_match(db: Session, db_study_match: UserStudyMatch):
+    db.delete(db_study_match)
+    db.commit()
+
+def delete_study_matches_by_study_id(db: Session, study_id: int):
+    db.query(UserStudyMatch).filter(UserStudyMatch.study_id == study_id).delete()
+    db.commit()

@@ -6,9 +6,9 @@ from enum import Enum
 class StudyBase(BaseModel):
     title: str
     start: date
-    end: Optional[date] = None
-    description: Optional[str] = None
-    contact_info: Optional[List[str]] = []  # JSON 필드는 리스트 타입으로 표현
+    end: date | None = None
+    description: str | None = None
+    contact_info: List[str] | None = []  # JSON 필드는 리스트 타입으로 표현
     status: str | None = None
     # photo_ids: Optional[List[str]] = []  # JSON 필드는 리스트 타입으로 표현
     
@@ -34,7 +34,7 @@ class StudyUpdate(BaseModel):
     start: date | None = None
     end: date | None = None
     description: str | None = None
-    contact_info: Optional[List[str]] = []  # JSON 필드는 리스트 타입으로 표현
+    contact_info: List[str] | None = []  # JSON 필드는 리스트 타입으로 표현
     status: str | None = None
 
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
-from database import get_db  # 경로는 상황에 따라 조정해주세요.
+from database import get_db
 from domain.timeline import timeline_schema, timeline_crud
 from domain.user.user_router import get_current_user_id
 from models import User
