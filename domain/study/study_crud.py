@@ -82,16 +82,17 @@ def get_study_match(db: Session, match_id: int):
 def get_study_match_by_study_id_user_id(db: Session, study_id: int, user_id: int):
     return db.query(UserStudyMatch).filter(UserStudyMatch.study_id == study_id, UserStudyMatch.user_id == user_id).first()
 
-
-def get_study_matches_by_study_id(db: Session, study_id: int, skip:int=0, limit: int=100):
-    return db.query(UserStudyMatch).filter(UserStudyMatch.study_id == study_id).offset(skip).limit(limit).all()
+# 스터디 id로 스터디 참가자에 대한 모든 match 정보 불러오기(승인여부 관계 x)
+def get_study_matches_by_study_id(db: Session, study_id: int):
+    return db.query(UserStudyMatch).filter(UserStudyMatch.study_id == study_id).all()
 
 def get_unapproved_study_matches_by_study_id(db: Session, study_id: int, skip:int=0, limit: int=100):
     return db.query(UserStudyMatch).filter(UserStudyMatch.study_id == study_id, UserStudyMatch.is_approved==False).offset(skip).limit(limit).all()
 
-def get_user_ids_by_study_id(db: Session, study_id: int, skip: int = 0, limit: int = 100) -> list[int]:
+# 스터디 id로 승인된 스터디 참가자 id 정보 불러오기
+def get_user_ids_by_study_id(db: Session, study_id: int) -> list[int]:
     matches = get_study_matches_by_study_id(db=db, study_id=study_id)
-    user_ids = [match.user_id for match in matches]
+    user_ids = [match.user_id for match in matches if match.is_approved == True]
     return user_ids
 
 def get_unapproved_user_ids_by_study_id(db: Session, study_id: int, skip: int = 0, limit: int = 100) -> list[int]:
