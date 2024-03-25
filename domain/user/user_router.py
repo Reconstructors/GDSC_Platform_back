@@ -92,7 +92,11 @@ def login_for_access_token(
 
     response.set_cookie(key="access_token", value=access_token, expires=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES), httponly=True)
 
-    return user_schema.Token(access_token=access_token, token_type="bearer")
+    return {
+        "token": user_schema.Token(access_token=access_token, token_type="bearer"), 
+        "user_id" : user.id,
+        "user_name": user.username,
+        }
 
 
 # 조건에 맞는 모든 유저 목록 불러오기
