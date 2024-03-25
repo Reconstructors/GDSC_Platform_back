@@ -40,6 +40,14 @@ def get_user_by_id(db: Session, user_id:int):
         .first()
     )
 
+# user id list로 유저 정보 리스트 가져오기
+def get_users_by_id_list(db: Session, user_id_list:list[int]):
+    return (
+        db.query(User)
+        .filter(User.id.in_(user_id_list))
+        .all()
+    )
+
 # 조건에 맞는 유저 정보 목록 가져오기
 # skip, limit에 None을 전달하면, 해당 조건을 적용하지 않겠다는 의미
 def get_user_list(
