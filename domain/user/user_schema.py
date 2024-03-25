@@ -19,6 +19,7 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+        from_attributes = True
 
 class UserCreate(User):
     password1: str
@@ -41,6 +42,7 @@ class UserOut(User):
 
     class Config:
         orm_mode = True
+        from_attributes = True
         
 
 class UserInDB(User):

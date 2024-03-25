@@ -3,6 +3,8 @@ from typing import List, Tuple, Optional
 from datetime import date, datetime
 from enum import Enum
 
+from domain.user import user_schema
+
 class StudyBase(BaseModel):
     title: str
     start: date
@@ -41,8 +43,6 @@ class StudyUpdate(BaseModel):
     status: str | None = None
 
 
-
-
 class StudyMatchBase(BaseModel):
     user_id: int
     study_id: int
@@ -60,3 +60,12 @@ class StudyMatch(StudyMatchBase):
 
 class StudyDelete(BaseModel):
     study_id: int
+
+
+class StudyMatchWithUserInfo(user_schema.UserOut):
+    is_approved: bool
+    is_leader: bool
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
