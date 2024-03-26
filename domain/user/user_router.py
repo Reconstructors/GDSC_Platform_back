@@ -59,7 +59,7 @@ def check_duplicate(username: str, db: Session = Depends(get_db)):
                             detail="Username already exists")
 
 # 유저 로그인
-@router.post("/login", response_model= user_schema.Token)
+@router.post("/login", response_model= user_schema.LoginWithToken)
 def login_for_access_token(
         response: Response,
         form_data: OAuth2PasswordRequestForm = Depends(),
@@ -95,7 +95,7 @@ def login_for_access_token(
     return {
         "token": user_schema.Token(access_token=access_token, token_type="bearer"), 
         "user_id" : user.id,
-        "user_name": user.username,
+        "username": user.username,
         }
 
 
